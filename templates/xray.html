@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Disease Diagnosis System">
+    <title>DiagnoveraAI Pro - X-Ray Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', target);
+            localStorage.setItem('theme', target);
+            updateThemeIcon();
+        }
+        function updateThemeIcon() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const icon = document.getElementById('theme-icon');
+            if(icon) {
+                icon.setAttribute('data-lucide', current === 'dark' ? 'sun' : 'moon');
+                if(window.lucide) lucide.createIcons({icons: {sun: window.lucideIcons?.sun, moon: window.lucideIcons?.moon}});
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
+    <style>
+        .upload-container {
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        .upload-container:hover {
+            border-color: #1e90ff;
+            background: rgba(30,144,255,0.05);
+        }
+        .upload-container input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+        .upload-icon {
+            color: #1e90ff;
+            margin-bottom: 1rem;
+            width: 48px;
+            height: 48px;
+        }
+        #file-name {
+            display: block;
+            margin-top: 1rem;
+            color: #2ed573;
+            font-weight: bold;
+        }
+        .upload-container.dragover {
+            border-color: #1e90ff;
+            background: rgba(30,144,255,0.1);
+        }
+        .loading-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid #1e90ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            color: #cbd5e1;
+            font-weight: 600;
+            animation: pulse 1.5s infinite;
+            text-align: center;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="noise-overlay"></div>
+    <nav>
+        <a href="/" class="logo">
+            <i data-lucide="activity"></i>
+            <span>DiagnoveraAI Pro</span>
+        </a>
+        <div class="nav-links" style="align-items: center;">
+            <a href="/">Diagnostics</a>
+            <a href="/xray" style="color: var(--brand-primary); font-weight: 700;">X-Ray Scanner</a>
+            <a href="/history">History Logs</a>
+            <a href="/about">How it works</a>
+            <a href="/resources">Resources</a>
+            <button onclick="toggleTheme()" class="theme-toggle" style="background: rgba(15,23,42,0.5); border: 1px solid var(--border-glow); border-radius: 50%; color: var(--brand-primary); cursor: pointer; padding: 0.5rem; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s; margin-left: 1rem;" title="Toggle Theme">
+                <i id="theme-icon" data-lucide="sun" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+    </nav>
+    <div class="container" id="main-container">
+        <div class="pro-header animate-in">
+            <h1>Pneumonia X-Ray Scanner</h1>
+            <p>Upload a Chest X-Ray image. Our deep learning model will analyze it for signs of Pneumonia.</p>
+        </div>
+        <div class="pro-card animate-in" style="--card-color: #1e90ff; padding-top: 2rem; animation-delay: 0.2s; max-width: 600px; margin: 0 auto;" data-tilt data-tilt-max="1" data-tilt-glare data-tilt-max-glare="0.05">
+            {% if error %}
+            <div class="error-message" style="background: rgba(255, 71, 87, 0.1); border: 1px solid rgba(255, 71, 87, 0.3); color: #ff4757; padding: 1rem; border-radius: 12px; margin-bottom: 2rem;">
+                <i data-lucide="alert-circle" style="vertical-align: middle; margin-right: 8px;"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+            <form action="/predict_xray" method="POST" enctype="multipart/form-data" id="xrayForm" style="position: relative; z-index: 10;">
+                <h3 style="color: #cbd5e1; margin-bottom: 1rem; margin-top: 0.5rem; text-align: left; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="user-plus" style="width: 20px; height: 20px;"></i> Subject Registration
+                </h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; text-align: left;">
+                    <div style="grid-column: span 2;">
+                        <label for="patient_name" style="display: block; margin-bottom: 0.5rem; color: #94a3b8; font-size: 0.9rem;">Patient Full Name</label>
+                        <input type="text" id="patient_name" name="patient_name" value="{{ patient_name }}" placeholder="John Doe" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: #fff; font-family: inherit;">
+                    </div>
+                    <div>
+                        <label for="patient_age" style="display: block; margin-bottom: 0.5rem; color: #94a3b8; font-size: 0.9rem;">Age (Years)</label>
+                        <input type="number" id="patient_age" name="patient_age" value="{{ patient_age }}" placeholder="45" required min="1" max="120" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: #fff; font-family: inherit;">
+                    </div>
+                    <div>
+                        <label for="patient_gender" style="display: block; margin-bottom: 0.5rem; color: #94a3b8; font-size: 0.9rem;">Gender Identity</label>
+                        <select id="patient_gender" name="patient_gender" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: #fff; font-family: inherit;">
+                            <option value="" disabled {% if not patient_gender %}selected{% endif %}>Select...</option>
+                            <option value="Male" {% if patient_gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if patient_gender == 'Female' %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if patient_gender == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="confirm-section" style="text-align: center; margin-bottom: 2rem;">
+                    <button type="button" id="confirmBtn" class="btn-solid" style="padding: 0.8rem 2rem; border-radius: 12px; font-weight: bold; cursor: pointer; --card-color: #2ed573; display:inline-flex; align-items:center; gap:0.5rem; border: none; color: white;">
+                        <i data-lucide="check-circle"></i> Confirm Patient Details
+                    </button>
+                </div>
+                <div id="upload-section" style="display: none; opacity: 0; transition: opacity 0.5s;">
+                    <div class="upload-container" id="drop-area">
+                    <i data-lucide="upload-cloud" class="upload-icon"></i>
+                    <h3 style="color: #cbd5e1; margin-bottom: 0.5rem;">Upload X-Ray Image</h3>
+                    <p style="color: #475569; font-size: 0.9rem;">PNG, JPG, JPEG up to 5MB</p>
+                    <input type="file" name="file" id="fileElem" accept="image/*" required>
+                    <span id="file-name"></span>
+                </div>
+                <div class="action-bar" style="border-top-color: rgba(255,255,255,0.1); margin-top: 2rem; justify-content: center; flex-direction: column;">
+                    <button type="submit" id="analyzeBtn" class="btn-solid" style="padding: 1rem 2.5rem; border-radius: 14px; font-weight: bold; cursor: pointer; --card-color: #1e90ff; display:flex; align-items:center; gap:0.5rem; width: 100%; justify-content: center;">
+                        <span>Analyze X-Ray</span>
+                        <i data-lucide="scan"></i>
+                    </button>
+                    <div class="loading-container" id="loading-container">
+                        <div class="spinner"></div>
+                        <div class="loading-text">Analyzing X-Ray... <br> Please wait as this might take a moment.</div>
+                    </div>
+                </div>
+                </div> 
+            </form>
+        </div>
+    </div>
+    <footer style="margin-top: 3rem; position: relative; z-index: 10; text-align: center;">
+        <p style="color: #475569; font-weight: 500;">&copy; 2026 DiagnoveraAI Neural Diagnostic. Simple Intractive UI.</p>
+    </footer>
+    <script>
+        lucide.createIcons();
+        const fileElem = document.getElementById('fileElem');
+        const fileNameDisplay = document.getElementById('file-name');
+        const dropArea = document.getElementById('drop-area');
+        fileElem.addEventListener('change', function() {
+            if(this.files && this.files.length > 0) {
+                fileNameDisplay.textContent = 'Selected: ' + this.files[0].name;
+                dropArea.style.borderColor = '#2ed573';
+            } else {
+                fileNameDisplay.textContent = '';
+                dropArea.style.borderColor = '';
+            }
+        });
+        // Drag and Drop styles and functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => {
+                dropArea.classList.add('dragover');
+            }, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => {
+                dropArea.classList.remove('dragover');
+            }, false);
+        });
+        dropArea.addEventListener('drop', handleDrop, false);
+        function handleDrop(e) {
+            let dt = e.dataTransfer;
+            let files = dt.files;
+            fileElem.files = files;
+            if(files.length > 0) {
+                fileNameDisplay.textContent = 'Selected: ' + files[0].name;
+                dropArea.style.borderColor = '#2ed573';
+                dropArea.style.background = 'rgba(46,213,115,0.05)';
+            }
+        }
+        const xrayForm = document.getElementById('xrayForm');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loadingContainer = document.getElementById('loading-container');
+        xrayForm.addEventListener('submit', function() {
+            if (fileElem.files && fileElem.files.length > 0) {
+                analyzeBtn.style.display = 'none';
+                loadingContainer.style.display = 'flex';
+            }
+        });
+        // Patient Details Confirmation Logic
+        const nameInput = document.getElementById('patient_name');
+        const ageInput = document.getElementById('patient_age');
+        const genderInput = document.getElementById('patient_gender');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const confirmSection = document.getElementById('confirm-section');
+        const uploadSection = document.getElementById('upload-section');
+        confirmBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (nameInput.value.trim() !== '' && ageInput.value.trim() !== '' && genderInput.value !== '') {
+                // Lock inputs so they cannot be altered after confirmation, 
+                // but keep them accessible for form submission
+                nameInput.readOnly = true;
+                ageInput.readOnly = true;
+                nameInput.style.pointerEvents = 'none';
+                nameInput.style.opacity = '0.6';
+                ageInput.style.pointerEvents = 'none';
+                ageInput.style.opacity = '0.6';
+                genderInput.style.pointerEvents = 'none';
+                genderInput.style.opacity = '0.6';
+                // Hide confirm button
+                confirmSection.style.display = 'none';
+                // Show upload section
+                uploadSection.style.display = 'block';
+                setTimeout(() => {
+                    uploadSection.style.opacity = '1';
+                }, 50);
+            } else {
+                alert("Please fill out Patient Full Name, Age, and Gender before proceeding.");
+            }
+        });
+    </script>
+</body>
+</html>

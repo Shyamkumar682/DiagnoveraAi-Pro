@@ -1,0 +1,15 @@
+Chapter 1: Introduction
+
+1.1 Background
+The integration of Machine Learning (ML) in Healthcare is revolutionizing the way diseases are diagnosed, treated, and monitored. Historically, and still predominantly, medical diagnoses rely heavily on manual procedures encompassing extensive charting, lab test reviews, and visual inspections by physicians. However, traditional systems remain inherently susceptible to human factors. Research indicates that approximately 10% to 15% of all medical diagnoses are incorrect, with diagnostic errors contributing to thousands of preventable deaths and injuries annually. These non-trivial manual diagnosis errors—often stemming from cognitive biases, clinical fatigue, and fragmented care—can lead to critical delays, incorrect treatments, and catastrophic harm in high-risk conditions.
+
+Consequently, there is a pressing need for automated, intelligent clinical decision support systems. By analyzing longitudinal data, genetic profiles, and subtle patterns, machine learning provides a reliable "second opinion" that can mitigate human oversight. Automated diagnostic modeling aims to process complex, multidimensional medical data efficiently, standardize care protocols, and ultimately ensure superior patient safety.
+
+1.2 Problem Statement
+While Machine Learning offers promising solutions for automated disease diagnosis, the clinical deployment and reliability of these algorithms are fundamentally tethered to the quality and integrity of their training data. A pervasive and severely detrimental challenge in current ML-based diagnostic models is the combined presence of dataset redundancy and data leakage. 
+
+Dataset redundancy occurs when medical datasets contain vast amounts of duplicate, highly correlated, or irrelevant instances—often stemming from fragmented Electronic Health Records (EHR) and double-entry errors. This not only consumes excessive computational resources but can inadvertently amplify existing clinical biases and cause models to "memorize" iterative noise rather than generalize.
+
+More critically, data leakage (or label leakage) occurs when information representing the target outcome, or data from the test set, inadvertently contaminates the training pipeline. Examples include improper cross-validation splits, where the same patient records appear in both the training data and holdout set, or using time-shifted variables. Such leakage creates a "sneak peek" effect, artificially inflating the model's predictive accuracy during internal validation. However, this illusion of high performance shatters upon real-world clinical deployment, rendering the model brittle, unreliable, and highly hazardous for actual patient care. 
+
+This project aims to address these critical flaws by constructing a robust diagnostic framework. By systematically eliminating data leakage via rigorous temporal pre-processing and cross-validation integrity, and effectively managing dataset redundancy, the proposed system ensures the development of an ML diagnostic model that is not only highly accurate on paper but unequivocally reliable and safe for real-world healthcare environments.

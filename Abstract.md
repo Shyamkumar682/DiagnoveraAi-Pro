@@ -1,0 +1,7 @@
+# Abstract
+
+The rapid and accurate diagnosis of common ailments and respiratory conditions remains a significant challenge in modern healthcare, particularly in resource-constrained environments. This project introduces **DiagnoveraAI Pro**, an integrated, AI-driven diagnostic system designed to provide preliminary medical assessments through a dual-modality approach. The system combines a Machine Learning-based symptom analyzer with an automated X-ray diagnostic engine to deliver fast, reliable, and accessible health evaluations. 
+
+For the symptom-based predictive module, a Random Forest classifier was trained on a robust dataset encompassing 11 distinct conditions, including COVID-19, Pneumonia, Asthma, and Diabetes. The model demonstrated exceptional performance, achieving an overall accuracy of **98%**, with a precision score of 0.9772 and an F1-score of 0.9767. Concurrently, the X-ray analysis module employs advanced image processing techniques to detect signs of pneumonia from uploaded chest radiography scans. 
+
+The integration of these predictive models within a cohesive, user-friendly web application enables seamless patient data collection, diagnostic history tracking, and interactive report generation. By bridging the gap between automated symptom analysis and radiological assessment, DiagnoveraAI Pro serves as a highly effective supplementary tool for early disease detection, empowering both patients and healthcare professionals with immediate, data-driven diagnostic insights.

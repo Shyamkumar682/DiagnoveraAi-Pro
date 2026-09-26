@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Disease Diagnosis System">
+    <title>DiagnoveraAI Pro - Intelligent Diagnosis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+        // Prevent Light/Dark Mode FOUC
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', target);
+            localStorage.setItem('theme', target);
+            updateThemeIcon();
+        }
+        function updateThemeIcon() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const icon = document.getElementById('theme-icon');
+            if(icon) {
+                icon.setAttribute('data-lucide', current === 'dark' ? 'sun' : 'moon');
+                if(window.lucide) lucide.createIcons({icons: {sun: window.lucideIcons?.sun, moon: window.lucideIcons?.moon}});
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
+</head>
+<body>
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="noise-overlay"></div>
+    <nav>
+        <a href="/" class="logo">
+            <i data-lucide="activity"></i>
+            <span>DiagnoveraAI Pro</span>
+        </a>
+        <div class="nav-links" style="align-items: center;">
+            <a href="/" style="color: var(--brand-primary); font-weight: 700;">Diagnostics</a>
+            <a href="/xray">X-Ray Scanner</a>
+            <a href="/history">History Logs</a>
+            <a href="/about">How it works</a>
+            <a href="/resources">Resources</a>
+            <button onclick="toggleTheme()" class="theme-toggle" style="background: rgba(15,23,42,0.5); border: 1px solid var(--border-glow); border-radius: 50%; color: var(--brand-primary); cursor: pointer; padding: 0.5rem; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s; margin-left: 1rem;" title="Toggle Theme">
+                <i id="theme-icon" data-lucide="sun" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+    </nav>
+    <div class="container" id="main-container">
+        <div class="pro-header animate-in">
+            <h1>Intelligent Health Analysis</h1>
+            <p>Our neural model analyzes your symptoms to predict potential conditions with unprecedented precision. Initialize scan by logging your telemetry.</p>
+        </div>
+        <div class="pro-card animate-in" style="--card-color: #1e90ff; padding-top: 1rem; animation-delay: 0.2s;" data-tilt data-tilt-max="1" data-tilt-glare data-tilt-max-glare="0.05">
+            {% if error %}
+            <div class="error-message" style="background: rgba(255, 71, 87, 0.1); border: 1px solid rgba(255, 71, 87, 0.3); color: #ff4757; padding: 1rem; border-radius: 12px; margin-bottom: 2rem;">
+                <i data-lucide="alert-circle" style="vertical-align: middle; margin-right: 8px;"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+            <div class="search-container" style="display: flex; gap: 1rem; align-items: center; position: relative; z-index: 10;">
+                <div style="position: relative; flex-grow: 1;">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="symptomSearch" class="search-input" placeholder="Query symptom database (e.g. Fever, Cough)..." style="background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);">
+                </div>
+                <button type="button" id="voiceBtn" class="btn-solid" style="padding: 1.125rem 1.5rem; border-radius: 14px; cursor: pointer; --card-color: #eccc68; display:flex; align-items:center;" title="Use Voice to Select Symptoms">
+                    <i data-lucide="mic"></i>
+                </button>
+            </div>
+            <form action="/predict" method="POST" id="diagnosisForm" style="position: relative; z-index: 10;">
+                <h3 style="color: #2ed573; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i data-lucide="user"></i> Patient Telemetry
+                </h3>
+                <div class="demographics-grid">
+                    <div class="form-group">
+                        <label for="patientName" style="color: #cbd5e1;">Patient Name</label>
+                        <input type="text" id="patientName" name="patient_name" class="form-control" style="background: rgba(0,0,0,0.4);" placeholder="E.g. John Doe" pattern="[A-Za-z\s]+" title="Only alphabetic characters and spaces are allowed" oninput="validateName(this)" required>
+                        <span id="nameErrorMsg" style="color: #ff4757; font-size: 0.85rem; display: none; margin-top: 0.5rem;"><i data-lucide="x-circle" style="width:14px; height:14px; vertical-align:middle; margin-right:4px;"></i> Numbers and special characters are not allowed!</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="patientAge" style="color: #cbd5e1;">Age</label>
+                        <input type="text" inputmode="numeric" pattern="[0-9]+" id="patientAge" name="patient_age" class="form-control" style="background: rgba(0,0,0,0.4);" placeholder="E.g. 35" maxlength="3" oninput="validateAge(this)" required>
+                        <span id="ageErrorMsg" style="color: #ff4757; font-size: 0.85rem; display: none; margin-top: 0.5rem;"><i data-lucide="x-circle" style="width:14px; height:14px; vertical-align:middle; margin-right:4px;"></i> Only numbers up to 150 are allowed!</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="patientGender" style="color: #cbd5e1;">Gender</label>
+                        <select id="patientGender" name="patient_gender" class="form-control" style="background: rgba(0,0,0,0.4);" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="symptomDuration" style="color: #cbd5e1;">Symptoms Duration</label>
+                        <select id="symptomDuration" name="symptom_duration" class="form-control" style="background: rgba(0,0,0,0.4);" required>
+                            <option value="" disabled selected>Select Timeline</option>
+                            <option value="Less than 24 hours">24 hours</option>
+                            <option value="1 to 3 days">1 to 3 days</option>
+                            <option value="1 week">1 week</option>
+                            <option value="More than 2 weeks">Extended (> 2 weeks)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="pregnancyGroup" style="display: none;">
+                        <label for="pregnancyStatus" style="color: #cbd5e1;">Pregnancy Status</label>
+                        <select id="pregnancyStatus" name="pregnancy_status" class="form-control" style="background: rgba(0,0,0,0.4);">
+                            <option value="Not Applicable" selected>Not Applicable</option>
+                            <option value="Pregnant">Pregnant</option>
+                            <option value="Not Sure">Not Sure</option>
+                        </select>
+                    </div>
+                </div>
+                <h3 style="color: #1e90ff; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i data-lucide="activity"></i> Symptom
+                </h3>
+                <div class="symptoms-grid">
+                    {% for symptom in symptoms %}
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" name="symptoms" value="{{ symptom }}">
+                        <span>{{ symptom }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <div class="action-bar" style="border-top-color: rgba(255,255,255,0.1);">
+                    <div class="selection-info">
+                        Symptoms Selected: <b id="selectedCount" style="color: #1e90ff;">0</b>
+                    </div>
+                    <button type="submit" id="analyzeBtn" class="btn-solid" style="padding: 1rem 2.5rem; border-radius: 14px; font-weight: bold; cursor: pointer; --card-color: #1e90ff; display:flex; align-items:center; gap:0.5rem;" disabled>
+                        <span>Execute Scan</span>
+                        <i data-lucide="scan-line"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer style="margin-top: 3rem; position: relative; z-index: 10;">
+        <p style="color: #475569; font-weight: 500;">&copy; 2026 DiagnoveraAI Neural Diagnostic. Simple Intractive UI.</p>
+    </footer>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script>
+        lucide.createIcons();
+        // Flashlight Cursor Effect
+        const container = document.getElementById("main-container");
+        const cards = document.querySelectorAll('.pro-card');
+        if (container && cards) {
+            container.addEventListener("mousemove", (e) => {
+                for(const card of cards) {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty("--mouse-x", `${x}px`);
+                    card.style.setProperty("--mouse-y", `${y}px`);
+                }
+            });
+        }
+        function validateName(input) {
+            const errorMsg = document.getElementById('nameErrorMsg');
+            const regex = /[^A-Za-z\s]/g;
+            if (regex.test(input.value)) {
+                // Instantly strip matching characters (numbers, emojis, symbols)
+                input.value = input.value.replace(regex, '');
+                // Show floating error message dynamically
+                errorMsg.style.display = 'block';
+                if(window.lucide) lucide.createIcons(); 
+                clearTimeout(input.errorTimeout);
+                input.errorTimeout = setTimeout(() => { errorMsg.style.display = 'none'; }, 3000);
+            }
+        }
+        function validateAge(input) {
+            const errorMsg = document.getElementById('ageErrorMsg');
+            const regex = /[^0-9]/g;
+            let hasError = false;
+            if (regex.test(input.value)) {
+                // Strip non-numbers (alphabets, symbols, emojis)
+                input.value = input.value.replace(regex, '');
+                hasError = true;
+            }
+            // Limit to max 150 dynamically
+            if (input.value !== '' && parseInt(input.value) > 150) {
+                input.value = '150';
+                hasError = true;
+            }
+            if (hasError) {
+                errorMsg.style.display = 'block';
+                if(window.lucide) lucide.createIcons(); 
+                clearTimeout(input.errorTimeout);
+                input.errorTimeout = setTimeout(() => { errorMsg.style.display = 'none'; }, 3000);
+            }
+        }
+        // Toggle pregnancy field visibility
+        const genderSelect = document.getElementById('patientGender');
+        const pregnancyGroup = document.getElementById('pregnancyGroup');
+        const pregnancyStatus = document.getElementById('pregnancyStatus');
+        if(genderSelect && pregnancyGroup) {
+            genderSelect.addEventListener('change', function() {
+                if(this.value === 'Female') {
+                    pregnancyGroup.style.display = 'block';
+                } else {
+                    pregnancyGroup.style.display = 'none';
+                    pregnancyStatus.value = 'Not Applicable';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

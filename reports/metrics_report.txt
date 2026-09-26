@@ -1,0 +1,23 @@
+=== Advanced Metrics for Random Forest ===
+Precision Score: 0.9772
+Recall Score: 0.9787
+F1 Score: 0.9767
+
+=== Classification Report ===
+                               precision    recall  f1-score   support
+
+                    Allergies       1.00      1.00      1.00        21
+                       Anemia       0.93      1.00      0.96        13
+                       Asthma       1.00      1.00      1.00        23
+                     COVID-19       1.00      0.86      0.92        14
+                  Common Cold       0.86      1.00      0.92        12
+                     Diabetes       1.00      0.95      0.98        22
+Gastroenteritis (Stomach Flu)       1.00      1.00      1.00        16
+              Influenza (Flu)       1.00      0.95      0.98        22
+                     Migraine       1.00      1.00      1.00        17
+                    Pneumonia       1.00      1.00      1.00        14
+                    Pregnancy       0.96      1.00      0.98        26
+
+                     accuracy                           0.98       200
+                    macro avg       0.98      0.98      0.98       200
+                 weighted avg       0.98      0.98      0.98       200

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Medical Resources - DiagnoveraAI">
+    <title>Pro Resources - DiagnoveraAI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+        // Prevent Light/Dark Mode FOUC
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', target);
+            localStorage.setItem('theme', target);
+            updateThemeIcon();
+        }
+        function updateThemeIcon() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const icon = document.getElementById('theme-icon');
+            if(icon) {
+                icon.setAttribute('data-lucide', current === 'dark' ? 'sun' : 'moon');
+                if(window.lucide) lucide.createIcons({icons: {sun: window.lucideIcons?.sun, moon: window.lucideIcons?.moon}});
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
+</head>
+<body>
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="noise-overlay"></div>
+    <nav>
+        <a href="/" class="logo">
+            <i data-lucide="activity"></i>
+            <span>DiagnoveraAI Pro</span>
+        </a>
+        <div class="nav-links" style="align-items: center;">
+            <a href="/">Diagnostics</a>
+            <a href="/xray">X-Ray Scanner</a>
+            <a href="/history">History Logs</a>
+            <a href="/about">How it works</a>
+            <a href="/resources" style="color: var(--brand-primary); font-weight: 700;">Resources</a>
+            <button onclick="toggleTheme()" class="theme-toggle" style="background: rgba(15,23,42,0.5); border: 1px solid var(--border-glow); border-radius: 50%; color: var(--brand-primary); cursor: pointer; padding: 0.5rem; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s; margin-left: 1rem;" title="Toggle Theme">
+                <i id="theme-icon" data-lucide="sun" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+    </nav>
+    <div class="container" style="max-width: 1300px; padding-top: 5rem; padding-bottom: 5rem;">
+        <div class="pro-header animate-in">
+            <h1>Healthcare Hub</h1>
+            <p>A next-generation access point for emergency operations, specialized telehealth, and trusted medical intelligence worldwide.</p>
+        </div>
+        <style>
+            .span-12 { grid-column: span 12; }
+            .span-6 { grid-column: span 6; }
+            @media (max-width: 900px) {
+                .span-6 { grid-column: span 12; }
+            }
+        </style>
+        <div class="pro-grid" id="cards-container">
+            <div class="pro-card card-emergency animate-in span-12" data-tilt data-tilt-max="2" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.05" style="animation-delay: 0.1s;">
+                <h3 style="color: var(--brand-accent);"><i data-lucide="siren" class="pulse-icon"></i> Critical Emergency Response</h3>
+                <p>Immediate 24/7 access to national emergency services, paramedics, and trauma support networks. Do not hesitate in life-threatening situations—tap directly to dial operational command centers.</p>
+                <div class="pro-links">
+                    <a href="tel:112" class="btn-pro btn-solid" style="color:white; text-shadow:0 1px 2px rgba(0,0,0,0.3);">
+                        <i data-lucide="phone"></i> 112 Command Center
+                    </a>
+                    <a href="tel:108" class="btn-pro">
+                        <i data-lucide="ambulance"></i> 108 Ambulance
+                    </a>
+                </div>
+            </div>
+            <div class="pro-card card-mental animate-in span-6" data-tilt data-tilt-max="4" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1" style="animation-delay: 0.2s;">
+                <h3 style="color: var(--brand-primary);"><i data-lucide="brain-circuit"></i> Mental Health</h3>
+                <p>Confidential psychiatric support and counseling tailored to crisis management. You are never alone.</p>
+                <div class="pro-links">
+                    <a href="tel:18005990019" class="btn-pro">
+                        <i data-lucide="phone-forwarded"></i> Kiran Govt.
+                    </a>
+                </div>
+            </div>
+            <div class="pro-card card-tele animate-in span-6" data-tilt data-tilt-max="3" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.08" style="animation-delay: 0.3s;">
+                <h3 style="color: var(--brand-secondary);"><i data-lucide="laptop-2"></i> Digital Telehealth</h3>
+                <p>Connect with board-certified physicians virtually. Experience secure encrypted video pipelines and get verified medical prescriptions delivered locally.</p>
+                <div class="pro-links">
+                    <a href="https://www.practo.com" target="_blank" class="btn-pro">
+                        <i data-lucide="microscope"></i> Practo Network
+                    </a>
+                    <a href="https://apollo247.com" target="_blank" class="btn-pro">
+                        <i data-lucide="activity-square"></i> Apollo Clinical
+                    </a>
+                </div>
+            </div>
+            <div class="pro-card card-radio animate-in span-6" data-tilt data-tilt-max="3" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.08" style="animation-delay: 0.35s;">
+                <h3 style="color: #06b6d4;"><i data-lucide="scan"></i> Respiratory & Radiology</h3>
+                <p>Locate accredited diagnostic laboratories for CT Scans, X-Rays, and detailed respiratory tests. Quick access to pneumonia care blueprints.</p>
+                <div class="pro-links">
+                    <a href="https://www.1mg.com/labs" target="_blank" class="btn-pro">
+                        <i data-lucide="flask-conical"></i> Tata 1mg Labs
+                    </a>
+                    <a href="https://www.lung.org/lung-health-diseases/lung-disease-lookup/pneumonia" target="_blank" class="btn-pro">
+                        <i data-lucide="file-text"></i> Pneumonia Care
+                    </a>
+                </div>
+            </div>
+            <div class="pro-card card-firstaid animate-in span-6" data-tilt data-tilt-max="3" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.08" style="animation-delay: 0.4s;">
+                <h3 style="color: #ff4757;"><i data-lucide="bandage"></i> First-Aid & Protocols</h3>
+                <p>Instant access to lifesaving step-by-step first-aid manuals. Know exactly how to react to fevers, asthma attacks, and traumas before paramedics arrive.</p>
+                <div class="pro-links">
+                    <a href="https://www.redcross.org/take-a-class/first-aid/performing-first-aid" target="_blank" class="btn-pro">
+                        <i data-lucide="heart-pulse"></i> Red Cross SOS
+                    </a>
+                </div>
+            </div>
+            <div class="pro-card card-telemetry animate-in span-6" data-tilt data-tilt-max="3" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.08" style="animation-delay: 0.45s; border-left: 4px solid #a855f7;">
+                <h3 style="color: #a855f7;"><i data-lucide="database"></i> Neural Telemetry System</h3>
+                <p>Your local DiagnoveraAI instance autonomously tracks all diagnostic workflows. Access the database to view trace IDs, timestamps, and confidence distributions.</p>
+                <div class="pro-links">
+                    <a href="/history" class="btn-pro">
+                        <i data-lucide="server"></i> Open Telemetry DB
+                    </a>
+                </div>
+            </div>
+            <div class="pro-card card-dataset animate-in span-6" data-tilt data-tilt-max="3" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.08" style="animation-delay: 0.5s; border-left: 4px solid #2ed573;">
+                <h3 style="color: #2ed573;"><i data-lucide="brain"></i> Deep-Learning Datasets</h3>
+                <p>Trust but verify. Our X-Ray CNN architecture is built upon publicly validated medical datasets. Access the raw diagnostic imaging archives our engine learns from.</p>
+                <div class="pro-links">
+                    <a href="https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia" target="_blank" class="btn-pro">
+                        <i data-lucide="database-zap"></i> Kaggle X-Ray Database
+                    </a>
+                    <a href="https://clinicalcenter.nih.gov/drd/datasets.html" target="_blank" class="btn-pro">
+                        <i data-lucide="archive"></i> NIH Clinical Sets
+                    </a>
+                </div>
+            </div>
+            <div class="pro-card card-global animate-in span-12" data-tilt data-tilt-max="3" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.08" style="animation-delay: 0.4s;">
+                <h3 style="color: var(--brand-primary);"><i data-lucide="globe-2"></i> Epidemiological Tracking</h3>
+                <p>Live health advisories, travel strictures, and clinical pandemic tracking directly from the leading global intelligence organizations.</p>
+                <div class="pro-links">
+                    <a href="https://www.who.int" target="_blank" class="btn-pro">
+                        <i data-lucide="shield-alert"></i> WHO Direct
+                    </a>
+                    <a href="https://www.cdc.gov" target="_blank" class="btn-pro">
+                        <i data-lucide="shield-check"></i> US CDC Center
+                    </a>
+                </div>
+            </div>
+            <div class="pro-card card-map animate-in span-12" style="animation-delay: 0.5s;">
+                <div class="map-content-wrapper">
+                    <h3 style="color: var(--brand-secondary);"><i data-lucide="radar"></i> Precision Healthcare Radar</h3>
+                    <p style="max-width: 900px;">Real-time cartography integration to locate trauma centers, pharmacies, X-Ray labs, and operational specialists within your immediate GPS radius.</p>
+                </div>
+                <div style="width: 100%; height: 500px; position: relative; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; overflow: hidden;">
+                    <div class="scanline"></div>
+                    <iframe width="100%" height="100%" class="dark-map-pro" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=100%25&amp;hl=en&amp;q=hospitals%20and%20xray%20labs%20near%20me&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed" style="position: relative; z-index: 1;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer style="margin-top: 3rem; position: relative; z-index: 10;">
+        <p style="color: #475569; font-weight: 500;">&copy; 2026 DiagnoveraAI Neural Diagnostic. Simple Intractive UI..</p>
+    </footer>
+    <script>
+        // Init Lucide SVGs
+        lucide.createIcons();
+        // -------------------------------------------------------------
+        // Flashlight Cursor Glow Effect
+        // Calculates mouse position dynamically relative to each card
+        // -------------------------------------------------------------
+        const cardsContainer = document.getElementById("cards-container");
+        const cards = document.querySelectorAll('.pro-card');
+        if(cardsContainer && cards) {
+            cardsContainer.addEventListener("mousemove", (e) => {
+                for(const card of cards) {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty("--mouse-x", `${x}px`);
+                    card.style.setProperty("--mouse-y", `${y}px`);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
