@@ -1,16 +1,9 @@
 # =========================================================
-# Important / Private Directories & Model Engines (Hidden from GitHub)
+# Ignored Large / Redundant Directories
 # =========================================================
 major_project/
 mini_project(orignal)/
 
-# Private AI Model Engines & Weights
-model_engine.py
-xray_engine.py
-models/
-*.pkl
-*.h5
-*.keras
 
 # =========================================================
 # Large Files & Sensitive Data
